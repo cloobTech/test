@@ -6,22 +6,26 @@
 #include <string.h>
 
 
-int main(int argc, char **argv)
+int main(int __attribute__((unused)) argc, char **argv)
 {
         ssize_t read_line;
         char *token, *buffer = NULL;
         size_t n = 0;
 	int i, k, status;
 	char *args[100];
-	char *ar[100];
 	pid_t pid;
 
         read_line = 0;
-	while (read_line != -1)
+	while (1)
         {
 		i = 0;
 		printf("#Cisfun$ ");
 		read_line = getline(&buffer, &n, stdin);
+		if (read_line == -1)
+		{
+			printf("logout\n");
+			return (0);
+		}
 		token = strtok(buffer, "\n");
 		token = strtok(token, " ");
 		while(token)
@@ -34,14 +38,14 @@ int main(int argc, char **argv)
 		pid = fork();
 		if (pid == 0)
 		{
-			k = execv(args[0], args);
+			k = execvp(args[0], args);
 			if (k == -1)
-				printf("%s: Command not foundi\n", argv[0]);
+				printf("%s: Command not found\n", argv[0]);
 		}
+		else
 		wait(&status);
 
         }
 
         return (0);
 }
-
