@@ -11,15 +11,17 @@ int main(int __attribute__((unused)) argc, char **argv)
         ssize_t read_line;
         char *token, *buffer = NULL;
         size_t n = 0;
-	int i, k, status;
+	int i, k, status, terminal;
 	char *args[100];
 	pid_t pid;
 
         read_line = 0;
-	while (1)
+	terminal = 1;
+	while (terminal)
         {
 		i = 0;
-		printf("#Cisfun$ ");
+		terminal = isatty(STDIN_FILENO);
+		write(STDOUT_FILENO, "#Cisfun$ ", 10);
 		read_line = getline(&buffer, &n, stdin);
 		if (read_line == -1)
 		{
