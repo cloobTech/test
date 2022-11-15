@@ -4,22 +4,24 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include "main.h"
 
-
-int main(int __attribute__((unused)) argc, char **argv, char **env)
+int main(int __attribute__((unused)) argc, char **argv)
 {
         ssize_t read_line;
-        char *token, *buffer = NULL;
+        char *token, *buffer, *path = NULL;
         size_t n = 0;
-	int i, k, status;
+	int i, k, status, terminal;
 	char *args[100];
 	pid_t pid;
 
         read_line = 0;
-	while (1)
+	terminal = 1;
+	while (terminal)
         {
 		i = 0;
-		printf("#Cisfun$ ");
+		terminal = isatty(STDIN_FILENO);
+		write(STDOUT_FILENO, "#Cisfun$ ", 10);
 		read_line = getline(&buffer, &n, stdin);
 		if (read_line == -1)
 		{
@@ -35,10 +37,15 @@ int main(int __attribute__((unused)) argc, char **argv, char **env)
 			i++;
 		}
 		args[i] = NULL;
+
+		path = findpath("ls");
+		/*if (path == NULL)
+		path = "nill";*/
+		printf("%s\n", path);
 		pid = fork();
 		if (pid == 0)
 		{
-			k = execve(args[0], args, env);
+			k = execvp(args[0], args);
 			if (k == -1)
 				printf("%s: Command not found\n", argv[0]);
 		}

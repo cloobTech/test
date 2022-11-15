@@ -2,50 +2,47 @@
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
-
-char* findpath(char *cmnd);
-int main()
+#include <stdlib.h>
+char* findpath(char *cmnd)
 {
-//	char *t;
-	int i = 0;
-	char *p[] = {"boy", "house", "girl", "boss"};
-	
-	while (p[i])  
-	{
-	//p[i] = strcat(p[i], "ss");
-	printf("%s\n", p[i]);
-	i++;
-	}
-/*	t = findpath("ls");
-	if (strcmp(t,"house")==0)
-	printf("%s\n", t);*/
-	return(0);
-}
-/*char* findpath(char *cmnd)
-{
-int i;
-char *token;
+int i, q, j;
+char *token, *ret;
 char *path[100];
 char *p = _getenv("PATH");
 char appending[20]= "/";
-char *append = _strcat(appending, cmnd);
+char *append = strcat(appending, cmnd);
  i = 0;
 token = strtok(p, ":");
 while(token)
 {
-	path[i] = token;
+	path[i] = strdup(token);
 	token = strtok(NULL, ":");
-//	printf("%s\n", path[i]);
 	i++;
 }
 i = 0;
+j = 0;
+ret = malloc (sizeof(char) * 100);
 while (path[i])
 {
-	path[i] = _strcat(path[i], append);		 
-	printf("%s\n", path[i]);
-//	q = access(path[i], F_OK);
-//	printf("%d\n", q);
+	path[i] = strcat(path[i], append);		 
+	q = access(path[i], F_OK);
+	if (q == 0)
+	{
+		j = i;
+		ret = strcpy(ret, path[i]);
+		break;
+	}
 	i++;
 }
-return ("good");
-}*/
+
+i = 0;
+while (path[i])
+{
+	free(path[i]);
+	i++;
+}
+
+if (j)
+return (ret);
+return (NULL);
+}
